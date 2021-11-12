@@ -27,3 +27,10 @@ class TestEvaluateEntry(TestCase):
         self.assertEqual(result, 'FINISHED')
         self.assertTrue(quit_exercise)
 
+
+class TestRunOpenStringExercise(TestCase):
+
+    @mock.patch('builtins.input', return_value='hello')
+    def test_quit(self, gualabears):
+        h = input('goodbye')
+        print(h)
