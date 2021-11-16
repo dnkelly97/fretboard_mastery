@@ -4,6 +4,9 @@ import time
 import pyaudio
 
 
+## pitch detection code based on solution posted here:
+## https://github.com/aubio/aubio/issues/78#issuecomment-268632493
+
 # PyAudio object.
 p = pyaudio.PyAudio()
 
