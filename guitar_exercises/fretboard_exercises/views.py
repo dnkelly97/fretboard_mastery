@@ -5,5 +5,5 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'index.html', {'note': 'high e', 'frequency': 329.6})
+    return render(request, 'fretboard_exercises/index.html', {'note': 'high e', 'frequency': 329.6})
 
