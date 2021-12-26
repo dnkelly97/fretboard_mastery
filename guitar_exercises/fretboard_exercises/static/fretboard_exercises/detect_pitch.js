@@ -8,6 +8,10 @@ let pitch;
 let stream;
 let notSetup = true;
 
+// used only for logging to console
+let firstFrequency = true;
+let firstChange = true;
+
 async function setup() {
   audioContext = await new AudioContext();
   stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -32,7 +36,9 @@ async function startPitchDetection(){
     stream.getTracks().forEach(function(track) {
       track.enabled = false;
     });
+    console.log(`timeout executed at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
   }, 10000);
+  console.log(`timeout set at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
   pitchInterval = setInterval(getPitch, 47);
 }
 
@@ -40,8 +46,16 @@ function getPitch(start) {
   pitch.getPitch(function(err, frequency) {
     if (frequency) {
       document.querySelector('#result').textContent = frequency;
+      if (firstFrequency) {
+        console.log(`first frequency detected at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
+        firstFrequency = false;
+      }
     } else {
       document.querySelector('#result').textContent = 'No pitch detected';
+      if (firstChange) {
+        console.log(`first change executed at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
+        firstChange = false;
+      }
     }
   })
 }
