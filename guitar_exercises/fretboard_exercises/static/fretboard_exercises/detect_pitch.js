@@ -20,7 +20,7 @@ function modelLoaded() {
   document.querySelector('#status').textContent='Model Loaded';
 }
 
-async function startPitch(){
+async function startPitchDetection(){
   if(notSetup){
     await setup();
   }
