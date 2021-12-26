@@ -5,24 +5,35 @@
 let audioContext;
 let mic;
 let pitch;
+let stream;
+let notSetup = true;
 
-async function startPitch() {
-  audioContext ||= new AudioContext();
+async function setup() {
+  audioContext = await new AudioContext();
   stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-  pitch = ml5.pitchDetection('http://localhost:8000/static/fretboard_exercises/model', audioContext , stream, modelLoaded);
+  pitch = await ml5.pitchDetection('http://localhost:8000/static/fretboard_exercises/model', audioContext, stream, modelLoaded);
+  notSetup = false;
+  console.log('setup complete:');
 }
 
 function modelLoaded() {
   document.querySelector('#status').textContent='Model Loaded';
+}
+
+async function startPitch(){
+  if(notSetup){
+    await setup();
+  }
+  stream.getTracks().forEach((track) => { track.enabled = true; });
   let pitchInterval;
   setTimeout(() => {
     clearInterval(pitchInterval);
     document.querySelector('#result').textContent = 'Done';
     stream.getTracks().forEach(function(track) {
-      track.stop();
+      track.enabled = false;
     });
   }, 10000);
-  pitchInterval = setInterval(getPitch, 50);
+  pitchInterval = setInterval(getPitch, 47);
 }
 
 function getPitch(start) {
@@ -34,4 +45,3 @@ function getPitch(start) {
     }
   })
 }
-
