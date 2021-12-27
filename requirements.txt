@@ -1,0 +1,20 @@
+asgiref==3.4.1
+atomicwrites==1.4.0
+attrs==21.2.0
+colorama==0.4.4
+coverage==6.1.2
+Cython==0.29.24
+Django==3.2.9
+iniconfig==1.1.1
+numpy==1.21.4
+packaging==21.2
+pluggy==1.0.0
+py==1.11.0
+PyAudio @ file:///C:/Users/Daniel/Downloads/PyAudio-0.2.11-cp38-cp38-win_amd64.whl
+pyparsing==2.4.7
+pytest==6.2.5
+pytest-cov==3.0.0
+pytz==2021.3
+sqlparse==0.4.2
+toml==0.10.2
+tomli==1.2.2
