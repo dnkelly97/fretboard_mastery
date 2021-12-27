@@ -8,6 +8,7 @@ let pitch;
 let stream;
 let notSetup = true;
 let exerciseTimeInMs = 10000;
+const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
 // used only for logging to console
 let firstChange;
@@ -16,7 +17,7 @@ let firstFrequency;
 async function setup() {
   audioContext = await new AudioContext();
   stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-  pitch = await ml5.pitchDetection('http://localhost:8000/static/fretboard_exercises/model', audioContext, stream, modelLoaded);
+  pitch = await ml5.pitchDetection(modelURL, audioContext, stream, modelLoaded);
   notSetup = false;
   console.log('setup complete:');
 }
