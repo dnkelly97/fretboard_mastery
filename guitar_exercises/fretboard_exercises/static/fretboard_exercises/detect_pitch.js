@@ -7,10 +7,11 @@ let mic;
 let pitch;
 let stream;
 let notSetup = true;
+let exerciseTimeInMs = 10000;
 
 // used only for logging to console
-let firstFrequency = true;
-let firstChange = true;
+let firstChange;
+let firstFrequency;
 
 async function setup() {
   audioContext = await new AudioContext();
@@ -28,22 +29,23 @@ async function startPitchDetection(){
   if(notSetup){
     await setup();
   }
+  firstFrequency = true;
+  firstChange = true;
   stream.getTracks().forEach((track) => { track.enabled = true; });
-  let pitchInterval;
-  setTimeout(() => {
-    clearInterval(pitchInterval);
-    document.querySelector('#result').textContent = 'Done';
-    stream.getTracks().forEach(function(track) {
-      track.enabled = false;
-    });
-    console.log(`timeout executed at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
-  }, 10000);
-  console.log(`timeout set at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
-  pitchInterval = setInterval(getPitch, 47);
+  let start = Date.now();
+  console.log(`starting at ${String(start).slice(this.length - 5, this.length - 3)}`);
+  while (Date.now() - start < exerciseTimeInMs) {
+    await getPitch();
+  }
+  console.log(`Finished at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
+  document.querySelector('#result').textContent = 'Done';
+  stream.getTracks().forEach(function(track) {
+    track.enabled = false;
+  });
 }
 
-function getPitch(start) {
-  pitch.getPitch(function(err, frequency) {
+async function getPitch(start) {
+  return pitch.getPitch(function(err, frequency) {
     if (frequency) {
       document.querySelector('#result').textContent = frequency;
       if (firstFrequency) {
