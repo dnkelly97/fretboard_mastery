@@ -1,5 +1,8 @@
+import pytest
 from django.urls import reverse
+from .utils import ValidationErrorTestingMixin
 import json
+from fretboard_exercises.models import Note, FretboardLocation
 import pdb
 
 
@@ -17,3 +20,23 @@ class TestFretboardExerciseViews:
             assert note_info['string'] in request_data['strings']
         # pdb.set_trace()
 
+
+class TestNoteModel(ValidationErrorTestingMixin):
+
+    def test_note_model_validations(self):
+        with self.assert_validation_error(['note']):
+            Note(note='e', frequency=100.56).full_clean()
+        Note(note='E', frequency=100.678).full_clean()
+        Note(note='F#', frequency=100.6).full_clean()
+
+
+@pytest.mark.django_db
+class TestFretboardLocationModel(ValidationErrorTestingMixin):
+
+    def test_fretboard_location_model_validations(self):
+        note = Note(note='E', frequency=100.7)
+        note.full_clean()
+        note.save()
+        with self.assert_validation_error(['note', 'string', 'fret']):
+            FretboardLocation(string=-1, fret=13).full_clean()
+        FretboardLocation(string=1, fret=2, note=note).full_clean()
