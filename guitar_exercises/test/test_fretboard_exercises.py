@@ -32,7 +32,7 @@ class TestNoteModel(ValidationErrorTestingMixin):
         return Note(name='F#/Gb', frequency=1.2)
 
     def test_note_model_validations(self):
-        with self.assert_validation_error(['note']):
+        with self.assert_validation_error(['name']):
             Note(name='e', frequency=100.56).full_clean()
         Note(name='E', frequency=100.678).full_clean()
         Note(name='F#/Gb', frequency=100.6).full_clean()
