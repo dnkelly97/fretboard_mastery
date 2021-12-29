@@ -23,20 +23,35 @@ class TestFretboardExerciseViews:
 
 class TestNoteModel(ValidationErrorTestingMixin):
 
+    @pytest.fixture
+    def natural_note(self):
+        return Note(name='C', frequency=100.7)
+
+    @pytest.fixture
+    def nonnatural_note(self):
+        return Note(name='F#/Gb', frequency=1.2)
+
     def test_note_model_validations(self):
         with self.assert_validation_error(['note']):
-            Note(note='e', frequency=100.56).full_clean()
-        Note(note='E', frequency=100.678).full_clean()
-        Note(note='F#', frequency=100.6).full_clean()
+            Note(name='e', frequency=100.56).full_clean()
+        Note(name='E', frequency=100.678).full_clean()
+        Note(name='F#/Gb', frequency=100.6).full_clean()
+
+    def test_sharp_name(self, natural_note, nonnatural_note):
+        assert natural_note.sharp_name() == 'C'
+        assert nonnatural_note.sharp_name() == 'F#'
+
+    def test_flat_name(self, natural_note, nonnatural_note):
+        assert natural_note.flat_name() == 'C'
+        assert nonnatural_note.flat_name() == 'Gb'
 
 
 @pytest.mark.django_db
 class TestFretboardLocationModel(ValidationErrorTestingMixin):
 
-    def test_fretboard_location_model_validations(self):
-        note = Note(note='E', frequency=100.7)
-        note.full_clean()
-        note.save()
+    def test_fretboard_location_model_validations(self, natural_note):
+        natural_note.full_clean()
+        natural_note.save()
         with self.assert_validation_error(['note', 'string', 'fret']):
             FretboardLocation(string=-1, fret=13).full_clean()
-        FretboardLocation(string=1, fret=2, note=note).full_clean()
+        FretboardLocation(string=1, fret=2, note=natural_note).full_clean()

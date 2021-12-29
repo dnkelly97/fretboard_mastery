@@ -12,19 +12,20 @@ class Note(models.Model):
         ('E', 'E'),
         ('F', 'F'),
         ('G', 'G'),
-        ('Ab', 'Ab'),
-        ('G#', 'G#'),
-        ('A#', 'A#'),
-        ('Bb', 'Bb'),
-        ('C#', 'C#'),
-        ('Db', 'Db'),
-        ('D#', 'D#'),
-        ('Eb', 'Eb'),
-        ('F#', 'F#'),
-        ('Gb', 'Gb'),
+        ('G#/Ab', 'G#/Ab'),
+        ('A#/Bb', 'A#/Bb'),
+        ('C#/Db', 'C#/Db'),
+        ('D#/Eb', 'D#/Eb'),
+        ('F#/Gb', 'F#/Gb'),
     ]
-    note = models.CharField(choices=NOTE_CHOICES, max_length=2)
+    name = models.CharField(choices=NOTE_CHOICES, max_length=5)
     frequency = models.FloatField()
+
+    def sharp_name(self):
+        return self.name.split('/')[0]
+
+    def flat_name(self):
+        return self.name.split('/')[-1]
 
 
 class FretboardLocation(models.Model):
