@@ -4,7 +4,7 @@ attrs==21.2.0
 colorama==0.4.4
 coverage==6.1.2
 Cython==0.29.24
-Django==3.2.9
+Django==3.2.10
 iniconfig==1.1.1
 numpy==1.21.4
 packaging==21.2
