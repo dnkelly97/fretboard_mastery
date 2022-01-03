@@ -36,6 +36,3 @@ class TestGuitarSeeding:
 
     def test_number_of_notes(self):
         assert Note.objects.all().count() == 47
-
-    def test_number_of_fretboard_locations(self):
-        assert GuitarFretboardLocation.objects.all().count() == 6*23
