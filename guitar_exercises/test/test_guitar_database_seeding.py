@@ -1,4 +1,4 @@
-from fretboard_exercises.models import Note, FretboardLocation
+from fretboard_exercises.models import Note, GuitarFretboardLocation
 import pytest
 
 
@@ -25,17 +25,17 @@ class TestGuitarSeeding:
 
     @pytest.mark.parametrize("string, fret, note_name, frequency", test_locations)
     def test_fretboard_location_notes(self, string, fret, note_name, frequency):
-        location = FretboardLocation.objects.get(string=string, fret=fret)
+        location = GuitarFretboardLocation.objects.get(string=string, fret=fret)
         assert location.note.name == note_name
         assert location.note.frequency == frequency
 
     def test_fretboard_locations_exist(self):
         for string in range(1, 7):
             for fret in range(23):
-                assert FretboardLocation.objects.get(string=string, fret=fret)
+                assert GuitarFretboardLocation.objects.get(string=string, fret=fret)
 
     def test_number_of_notes(self):
         assert Note.objects.all().count() == 47
 
     def test_number_of_fretboard_locations(self):
-        assert FretboardLocation.objects.all().count() == 6*23
+        assert GuitarFretboardLocation.objects.all().count() == 6*23

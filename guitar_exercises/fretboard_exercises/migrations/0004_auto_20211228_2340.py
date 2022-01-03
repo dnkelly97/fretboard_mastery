@@ -22,7 +22,7 @@ def load_fretboard_data(apps, schema_editor):
                 row[note] = row[note].replace('\xa0', '')
             print(f"{'0' if i < 10 else ''}{i}. {row[note]}{(7 - len(row[note]))*' '}{row[frequency]}")
             try:
-                new_note = Note(note=row[note], frequency=row[frequency])
+                new_note = Note(name=row[note], frequency=row[frequency])
                 new_note.full_clean()
                 new_note.save()
             except ValidationError as e:
@@ -35,8 +35,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('fretboard_exercises', '0003_rename_note_note_name'),
+        ('fretboard_exercises', '0005_guitarfretboardlocation_delete_fretboardlocation'),
     ]
 
     operations = [
-        migrations.RunPython(load_fretboard_data),
+        # migrations.RunPython(load_fretboard_data),
     ]

@@ -29,8 +29,16 @@ class Note(models.Model):
 
 
 class FretboardLocation(models.Model):
+    string = models.IntegerField()
+    fret = models.IntegerField()
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class GuitarFretboardLocation(FretboardLocation):
     STRING_CHOICES = [(i, i) for i in range(1, 7)]
-    FRET_CHOICES = [(i, i) for i in range(13)]
+    FRET_CHOICES = [(i, i) for i in range(25)]
     string = models.IntegerField(choices=STRING_CHOICES)
     fret = models.IntegerField(choices=FRET_CHOICES)
-    note = models.ForeignKey(Note, on_delete=models.CASCADE)
