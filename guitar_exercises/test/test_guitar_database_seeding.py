@@ -27,7 +27,7 @@ class TestGuitarSeeding:
     def test_fretboard_location_notes(self, string, fret, note_name, frequency):
         location = GuitarFretboardLocation.objects.get(string=string, fret=fret)
         assert location.note.name == note_name
-        assert location.note.frequency == frequency
+        assert location.note.frequency == pytest.approx(frequency, 0.1)
 
     def test_fretboard_locations_exist(self):
         for string in range(1, 7):
