@@ -16,10 +16,11 @@ def nonnatural_note():
     return Note(name='F#/Gb', frequency=1.2)
 
 
+@pytest.mark.django_db
 class TestFretboardExerciseViews:
 
     def test_note_xhr(self, client):
-        url = reverse('new_note')
+        url = reverse('new_note', kwargs={'instrument': 'guitar'})
         request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C']}
         # after 100 trials, probability that a wrong note or string was possible but didn't happen is vanishingly small
         for i in range(100):
