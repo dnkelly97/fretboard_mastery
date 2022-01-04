@@ -10,6 +10,23 @@ let notSetup = true;
 let exerciseTimeInMs = 10000;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
+
+let data = {"strings": [5, 6], "notes": ['A', 'B', 'C']}
+function getNote(){
+    $.ajax({
+        traditional: true,
+        headers: { "X-CSRFToken": token },
+        url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
+        type: 'POST',
+        data: data,
+        success: function(data){
+            console.log(data);
+            $('#instruction').text(`${data.note} on string ${data.string}`);
+        },
+        error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
+    });
+}
+
 // used only for logging to console
 let firstChange;
 let firstFrequency;
