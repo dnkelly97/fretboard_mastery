@@ -14,8 +14,46 @@
 </head>
 <body>
     <p id="instruction">string {{ string }} {{ note }}</p>
-    <p>target frequency: {{ frequency }}</p>
-    <button id="new_note_button" onclick="getNote()">Get New Note</button>
+    <p id="target_frequency">target frequency: {{ frequency }}</p>
+    <form id="new_note_form" method="post" action="new_note/">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Strings</legend>
+            <input type="checkbox" name="strings" value="1" checked>
+            <label>1  </label>
+            <input type="checkbox" name="strings" value="2" checked>
+            <label>2  </label>
+            <input type="checkbox" name="strings" value="3" checked>
+            <label>3  </label>
+            <input type="checkbox" name="strings" value="4" checked>
+            <label>4  </label>
+            <input type="checkbox" name="strings" value="5" checked>
+            <label>5  </label>
+            <input type="checkbox" name="strings" value="6" checked>
+            <label>6  </label>
+        </fieldset>
+        <fieldset>
+            <legend>Notes</legend>
+            <input type="checkbox" name="notes" value="C" checked>
+            <label>C  </label>
+            <input type="checkbox" name="notes" value="D" checked>
+            <label>D  </label>
+            <input type="checkbox" name="notes" value="E" checked>
+            <label>E  </label>
+            <input type="checkbox" name="notes" value="F" checked>
+            <label>F  </label>
+            <input type="checkbox" name="notes" value="G" checked>
+            <label>G  </label>
+            <input type="checkbox" name="notes" value="A" checked>
+            <label>A  </label>
+            <input type="checkbox" name="notes" value="B" checked>
+            <label>B  </label>
+        </fieldset>
+        <br>
+        <input type="submit" value="Get New Note">
+    </form>
+    <br>
+    <br>
     <button id="begin_button" onclick="startPitchDetection()">Begin Challenge</button>
     <p id="status">waiting for model to load</p>
     <p id="result" style="color:Red">note not detected...</p>
