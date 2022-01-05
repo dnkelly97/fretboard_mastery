@@ -18,8 +18,6 @@ $(document).ready(function(){
         e.preventDefault();
         let data = $(this).serialize();
         $.ajax({
-            traditional: true,
-            headers: { "X-CSRFToken": token },
             url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
             type: 'POST',
             data: data,
