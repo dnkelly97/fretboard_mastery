@@ -49,13 +49,11 @@
             <label>B  </label>
         </fieldset>
         <br>
-        <input type="submit" value="Get New Note">
+        <button id="begin_button" onclick="beginChallenge()">Begin Challenge</button>
     </form>
     <br>
     <br>
-    <button id="begin_button" onclick="startPitchDetection()">Begin Challenge</button>
     <p id="status">waiting for model to load</p>
     <p id="result" style="color:Red">note not detected...</p>
-    <p>target frequency: {{ frequency }}</p>
 </body>
 </html>
