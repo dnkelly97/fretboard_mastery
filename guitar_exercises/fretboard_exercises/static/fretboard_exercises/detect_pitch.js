@@ -7,33 +7,42 @@ let mic;
 let pitch;
 let stream;
 let notSetup = true;
-let exerciseTimeInMs = 10000;
+let exerciseTimeInMs = 30000;
+let target_frequency;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
 
-//let data = {"strings": [5, 6], "notes": ['A', 'B', 'C']}
+function getNewNote(data){
+  $.ajax({
+    url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
+    type: 'POST',
+    data: data,
+    success: function(data){
+//                console.log(data);
+        $('#instruction').text(`${data.note} on string ${data.string}`);
+        $('#target_frequency').text(`target frequency: ${data.frequency}`);
+        target_frequency = data.frequency;
+    },
+    error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
+  });
+}
 
 $(document).ready(function(){
     $('#new_note_form').submit(function(e){
         e.preventDefault();
         let data = $(this).serialize();
-        $.ajax({
-            url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
-            type: 'POST',
-            data: data,
-            success: function(data){
-//                console.log(data);
-                $('#instruction').text(`${data.note} on string ${data.string}`);
-                $('#target_frequency').text(`target frequency: ${data.frequency}`);
-            },
-            error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
-        });
+        getNewNote(data);
     });
 });
 
-// used only for logging to console
-let firstChange;
-let firstFrequency;
+async function beginChallenge(){
+  document.getElementById("begin_button").disabled = true;
+  if(notSetup){
+    await setup();
+  }
+  $('#new_note_form').submit();
+  startPitchDetection();
+}
 
 async function setup() {
   audioContext = await new AudioContext();
@@ -48,38 +57,30 @@ function modelLoaded() {
 }
 
 async function startPitchDetection(){
-  if(notSetup){
-    await setup();
-  }
-  firstFrequency = true;
-  firstChange = true;
   stream.getTracks().forEach((track) => { track.enabled = true; });
   let start = Date.now();
   console.log(`starting at ${String(start).slice(this.length - 5, this.length - 3)}`);
   while (Date.now() - start < exerciseTimeInMs) {
-    await getPitch();
+    let frequency = await getPitch();
+    if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
+        target_frequency = undefined;
+        $("#new_note_form").submit();
+    }
   }
   console.log(`Finished at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
   document.querySelector('#result').textContent = 'Done';
   stream.getTracks().forEach(function(track) {
     track.enabled = false;
   });
+  document.getElementById("begin_button").disabled = false;
 }
 
 async function getPitch(start) {
   return pitch.getPitch(function(err, frequency) {
     if (frequency) {
       document.querySelector('#result').textContent = frequency;
-      if (firstFrequency) {
-        console.log(`first frequency detected at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
-        firstFrequency = false;
-      }
     } else {
       document.querySelector('#result').textContent = 'No pitch detected';
-      if (firstChange) {
-        console.log(`first change executed at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
-        firstChange = false;
-      }
     }
   })
 }
