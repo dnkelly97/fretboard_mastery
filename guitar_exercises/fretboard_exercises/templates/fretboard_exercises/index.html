@@ -12,8 +12,6 @@
     <script src="{% static 'fretboard_exercises/detect_pitch.js' %}"></script>
 </head>
 <body>
-    <p id="instruction">string {{ string }} {{ note }}</p>
-    <p id="target_frequency">target frequency: {{ frequency }}</p>
     <form id="new_note_form" method="post" action="new_note/">
         {% csrf_token %}
         <fieldset>
@@ -55,5 +53,9 @@
     <br>
     <p id="status">waiting for model to load</p>
     <p id="result" style="color:Red">note not detected...</p>
+    <div id="note_info_display" style="display: none;">
+        <p id="instruction">string {{ string }} {{ note }}</p>
+        <p id="target_frequency">target frequency: {{ frequency }}</p>
+    </div>
 </body>
 </html>

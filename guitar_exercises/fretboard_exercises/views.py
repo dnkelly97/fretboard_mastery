@@ -19,5 +19,4 @@ def get_new_note(request, instrument):
     fretboard_location = INSTRUMENT_MODEL_MAP[instrument].objects.filter(note__name__in=allowed_notes, string__in=allowed_strings, fret__lte=12).order_by('?').first()
     return JsonResponse({'note': fretboard_location.note.name, 'string': fretboard_location.string, 'frequency': fretboard_location.note.frequency})
 
-# TODO have ^this view render a partial and display that with the ajax success function
 # TODO add timer and score count to UI

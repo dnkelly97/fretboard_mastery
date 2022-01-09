@@ -19,6 +19,9 @@ function getNewNote(data){
     data: data,
     success: function(data){
 //                console.log(data);
+        if(document.getElementById('note_info_display').style.display == 'none'){
+            document.getElementById('note_info_display').style.display = 'block';
+        }
         $('#instruction').text(`${data.note} on string ${data.string}`);
         $('#target_frequency').text(`target frequency: ${data.frequency}`);
         target_frequency = data.frequency;
