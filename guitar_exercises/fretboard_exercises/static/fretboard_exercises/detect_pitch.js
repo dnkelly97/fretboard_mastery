@@ -9,6 +9,7 @@ let stream;
 let notSetup = true;
 let exerciseTimeInMs = 30000;
 let target_frequency;
+let score = 0;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
 
@@ -24,6 +25,7 @@ function getNewNote(data){
         }
         $('#instruction').text(`${data.note} on string ${data.string}`);
         $('#target_frequency').text(`target frequency: ${data.frequency}`);
+        $('#score').text(`Score: ${score}`)
         target_frequency = data.frequency;
     },
     error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
@@ -68,6 +70,7 @@ async function startPitchDetection(){
     if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
         target_frequency = undefined;
         $("#new_note_form").submit();
+        score++;
     }
   }
   console.log(`Finished at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
@@ -75,6 +78,7 @@ async function startPitchDetection(){
   stream.getTracks().forEach(function(track) {
     track.enabled = false;
   });
+  score = 0;
   document.getElementById("begin_button").disabled = false;
 }
 
