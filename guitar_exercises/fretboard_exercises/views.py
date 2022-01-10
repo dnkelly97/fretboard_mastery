@@ -19,4 +19,5 @@ def get_new_note(request, instrument):
     fretboard_location = INSTRUMENT_MODEL_MAP[instrument].objects.filter(note__name__in=allowed_notes, string__in=allowed_strings, fret__lte=11).order_by('?').first()
     return JsonResponse({'note': fretboard_location.note.name, 'string': fretboard_location.string, 'frequency': fretboard_location.note.frequency})
 
-# TODO add timer and score count to UI
+# TODO different response for case where no strings or notes are selected by form
+# TODO make it so the same note doesn't get randomly selected twice in a row
