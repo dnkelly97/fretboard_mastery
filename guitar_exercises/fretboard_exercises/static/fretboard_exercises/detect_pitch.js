@@ -25,7 +25,7 @@ function getNewNote(data){
         }
         $('#instruction').text(`${data.note} on string ${data.string}`);
         $('#target_frequency').text(`target frequency: ${data.frequency}`);
-        $('#score').text(`Score: ${score}`)
+        $('#score').text(`Score: ${score}`);
         target_frequency = data.frequency;
     },
     error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
@@ -42,6 +42,7 @@ $(document).ready(function(){
 
 async function beginChallenge(){
   document.getElementById("begin_button").disabled = true;
+  score = 0;
   if(notSetup){
     await setup();
   }
@@ -63,9 +64,12 @@ function modelLoaded() {
 
 async function startPitchDetection(){
   stream.getTracks().forEach((track) => { track.enabled = true; });
+  await getPitch();
   let start = Date.now();
   console.log(`starting at ${String(start).slice(this.length - 5, this.length - 3)}`);
   while (Date.now() - start < exerciseTimeInMs) {
+    let current_second = String(exerciseTimeInMs + 1000 - (Date.now() - start)).slice(this.length - 5, this.length - 3);
+    $('#timer').text(`Time left: ${current_second}`);
     let frequency = await getPitch();
     if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
         target_frequency = undefined;
@@ -78,7 +82,6 @@ async function startPitchDetection(){
   stream.getTracks().forEach(function(track) {
     track.enabled = false;
   });
-  score = 0;
   document.getElementById("begin_button").disabled = false;
 }
 
@@ -91,3 +94,5 @@ async function getPitch(start) {
     }
   })
 }
+
+//todo make exercise end on 0 seconds not 1, make target frequency not 98 at end
