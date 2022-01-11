@@ -7,11 +7,16 @@ let mic;
 let pitch;
 let stream;
 let notSetup = true;
-let exerciseTimeInMs = 30000;
+let exerciseTimeInMs = 10000;
 let target_frequency;
 let score = 0;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
+
+function formIsValid(){
+  let data = $("#new_note_form").serialize()
+  return data.includes("notes=") && data.includes("strings=");
+}
 
 function getNewNote(data){
   $.ajax({
@@ -19,14 +24,13 @@ function getNewNote(data){
     type: 'POST',
     data: data,
     success: function(data){
-//                console.log(data);
-        if(document.getElementById('note_info_display').style.display == 'none'){
-            document.getElementById('note_info_display').style.display = 'block';
-        }
-        $('#instruction').text(`${data.note} on string ${data.string}`);
-        $('#target_frequency').text(`target frequency: ${data.frequency}`);
-        $('#score').text(`Score: ${score}`);
-        target_frequency = data.frequency;
+      if(document.getElementById('note_info_display').style.display == 'none'){
+        document.getElementById('note_info_display').style.display = 'block';
+      }
+      $('#instruction').text(`${data.note} on string ${data.string}`);
+      $('#target_frequency').text(`target frequency: ${data.frequency}`);
+      $('#score').text(`Score: ${score}`);
+      target_frequency = data.frequency;
     },
     error: function(xhr, status, error) {console.log(error); console.log(xhr); console.log(status);}
   });
@@ -41,13 +45,21 @@ $(document).ready(function(){
 });
 
 async function beginChallenge(){
-  document.getElementById("begin_button").disabled = true;
-  score = 0;
   if(notSetup){
     await setup();
   }
-  $('#new_note_form').submit();
-  startPitchDetection();
+  if(formIsValid()){
+    $("#alert-warning").text("");
+    document.getElementById("begin_button").disabled = true;
+    score = 0;
+    $('#new_note_form').submit();
+    $('#notes_fieldset')[0].disabled = true;
+    $('#strings_fieldset')[0].disabled = true;
+    startPitchDetection();
+  }
+  else{
+    $("#alert-warning").text("At least one string and at least one note must be selected to begin challenge.");
+  }
 }
 
 async function setup() {
@@ -84,6 +96,8 @@ async function startPitchDetection(){
     track.enabled = false;
   });
   document.getElementById("begin_button").disabled = false;
+  $('#notes_fieldset')[0].disabled = false;
+  $('#strings_fieldset')[0].disabled = false;
 }
 
 async function getPitch(start) {
