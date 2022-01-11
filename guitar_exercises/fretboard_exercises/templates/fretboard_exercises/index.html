@@ -12,9 +12,12 @@
     <script src="{% static 'fretboard_exercises/detect_pitch.js' %}"></script>
 </head>
 <body>
+    <div id="message">
+        <h4 id="alert-warning"></h4>
+    </div>
     <form id="new_note_form" method="post" action="new_note/">
         {% csrf_token %}
-        <fieldset>
+        <fieldset id="strings_fieldset">
             <legend>Strings</legend>
             <input type="checkbox" name="strings" value="1" checked>
             <label>1  </label>
@@ -29,7 +32,7 @@
             <input type="checkbox" name="strings" value="6" checked>
             <label>6  </label>
         </fieldset>
-        <fieldset>
+        <fieldset id="notes_fieldset">
             <legend>Notes</legend>
             <input type="checkbox" name="notes" value="C" checked>
             <label>C  </label>
@@ -61,3 +64,5 @@
     </div>
 </body>
 </html>
+
+<!--todo make a base template that includes a message header-->
