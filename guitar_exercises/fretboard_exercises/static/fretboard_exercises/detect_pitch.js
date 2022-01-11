@@ -77,6 +77,7 @@ async function startPitchDetection(){
         score++;
     }
   }
+  $('#timer').text(`Time left: 0`);
   console.log(`Finished at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
   document.querySelector('#result').textContent = 'Done';
   stream.getTracks().forEach(function(track) {
@@ -94,5 +95,3 @@ async function getPitch(start) {
     }
   })
 }
-
-//todo make exercise end on 0 seconds not 1, make target frequency not 98 at end
