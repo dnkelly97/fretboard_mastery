@@ -7,14 +7,14 @@ let mic;
 let pitch;
 let stream;
 let notSetup = true;
-let exerciseTimeInMs = 10000;
+let exerciseTimeInMs = 30000;
 let target_frequency;
 let score = 0;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
 
 function formIsValid(){
-  let data = $("#new_note_form").serialize()
+  let data = $("#new_note_form").serialize();
   return data.includes("notes=") && data.includes("strings=");
 }
 
