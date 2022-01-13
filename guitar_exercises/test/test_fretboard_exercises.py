@@ -31,6 +31,15 @@ class TestFretboardExerciseViews:
             assert note_info['string'] in request_data['strings']
         # pdb.set_trace()
 
+    @pytest.mark.parametrize("request_data", [{'strings': [5, 6]}, {'notes': ['A', 'B', 'C']}, {}])
+    def test_note_xhr_unacceptable_request(self, client, request_data):
+        url = reverse('new_note', kwargs={'instrument': 'guitar'})
+        response = client.post(url, request_data)
+        assert response.status_code == 406
+        response_json = json.loads(response.content)
+        assert response_json['message'] == 'At least one note and one string must be selected'
+
+
 
 class TestNoteModel(ValidationErrorTestingMixin):
 
