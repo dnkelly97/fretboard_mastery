@@ -39,10 +39,22 @@ class TestFretboardExerciseViews:
         url = reverse('new_note', kwargs={'instrument': 'guitar'})
         request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C']}
         response = client.post(url, request_data)
+        assert response.status_code == 200
         request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_note': 'C'}
         response = client.post(url, request_data)
+        assert response.status_code == 200
         request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_string': 6}
         response = client.post(url, request_data)
+        assert response.status_code == 200
+
+    def test_bad_previous_argument(self, client):
+        url = reverse('new_note', kwargs={'instrument': 'guitar'})
+        request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_note': 'hallelujah'}
+        response = client.post(url, request_data)
+        assert response.status_code == 200
+        request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_string': 100}
+        response = client.post(url, request_data)
+        assert response.status_code == 200
 
     @pytest.mark.parametrize("request_data", [{'strings': [5, 6]}, {'notes': ['A', 'B', 'C']}, {}])
     def test_note_xhr_unacceptable_request(self, client, request_data):
