@@ -35,6 +35,15 @@ class TestFretboardExerciseViews:
             assert note_info['string'] != prev_string
         # pdb.set_trace()
 
+    def test_previous_arguments_optional(self, client):
+        url = reverse('new_note', kwargs={'instrument': 'guitar'})
+        request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C']}
+        response = client.post(url, request_data)
+        request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_note': 'C'}
+        response = client.post(url, request_data)
+        request_data = {'strings': [5, 6], 'notes': ['A', 'B', 'C'], 'previous_string': 6}
+        response = client.post(url, request_data)
+
     @pytest.mark.parametrize("request_data", [{'strings': [5, 6]}, {'notes': ['A', 'B', 'C']}, {}])
     def test_note_xhr_unacceptable_request(self, client, request_data):
         url = reverse('new_note', kwargs={'instrument': 'guitar'})
@@ -42,7 +51,6 @@ class TestFretboardExerciseViews:
         assert response.status_code == 406
         response_json = json.loads(response.content)
         assert response_json['message'] == 'At least one note and one string must be selected'
-
 
 
 class TestNoteModel(ValidationErrorTestingMixin):
