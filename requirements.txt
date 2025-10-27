@@ -6,11 +6,11 @@ coverage==6.1.2
 Cython==0.29.24
 Django==3.2.9
 iniconfig==1.1.1
-numpy==1.21.4
+numpy
 packaging==21.2
 pluggy==1.0.0
 py==1.11.0
-PyAudio @ file:///C:/Users/Daniel/Downloads/PyAudio-0.2.11-cp38-cp38-win_amd64.whl
+PyAudio
 pyparsing==2.4.7
 pytest==6.2.5
 pytest-cov==3.0.0
