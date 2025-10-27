@@ -53,8 +53,8 @@ async function beginChallenge(){
     document.getElementById("begin_button").disabled = true;
     score = 0;
     $('#new_note_form').submit();
-    $('#notes_fieldset')[0].disabled = true;
-    $('#strings_fieldset')[0].disabled = true;
+    //$('#notes_fieldset')[0].disabled = true;
+    //$('#strings_fieldset')[0].disabled = true;
     startPitchDetection();
   }
   else{
@@ -96,8 +96,8 @@ async function startPitchDetection(){
     track.enabled = false;
   });
   document.getElementById("begin_button").disabled = false;
-  $('#notes_fieldset')[0].disabled = false;
-  $('#strings_fieldset')[0].disabled = false;
+  //$('#notes_fieldset')[0].disabled = false;
+  //$('#strings_fieldset')[0].disabled = false;
 }
 
 async function getPitch(start) {
