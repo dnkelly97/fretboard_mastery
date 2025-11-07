@@ -7,7 +7,7 @@ let mic;
 let pitch;
 let stream;
 let notSetup = true;
-let exerciseTimeInMs = 30000;
+let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
@@ -42,24 +42,38 @@ $(document).ready(function(){
         let data = $(this).serialize();
         getNewNote(data);
     });
+    $("#alert-warning").text("");
+    setup().then(pauseAudio);
 });
 
 async function beginChallenge(){
-  if(notSetup){
-    await setup();
-  }
   if(formIsValid()){
-    $("#alert-warning").text("");
+    await resumeAudio();
     document.getElementById("begin_button").disabled = true;
     score = 0;
     $('#new_note_form').submit();
     //$('#notes_fieldset')[0].disabled = true;
     //$('#strings_fieldset')[0].disabled = true;
-    startPitchDetection();
+    startPitchDetection().then(pauseAudio);
   }
   else{
     $("#alert-warning").text("At least one string and at least one note must be selected to begin challenge.");
   }
+}
+
+function pauseAudio(){
+  audioContext.suspend().then(() => {
+    console.log('Audio Context Suspended');
+  });
+  stream.getTracks().forEach((track) => { track.enabled = false; });
+}
+
+async function resumeAudio(){
+  if(audioContext.state === 'suspended'){
+    await audioContext.resume();
+    console.log('Audio Context Resumed');
+  }
+  stream.getTracks().forEach((track) => { track.enabled = true; });
 }
 
 async function setup() {
@@ -75,26 +89,25 @@ function modelLoaded() {
 }
 
 async function startPitchDetection(){
-  stream.getTracks().forEach((track) => { track.enabled = true; });
   await getPitch();
   let start = Date.now();
-  console.log(`starting at ${String(start).slice(this.length - 5, this.length - 3)}`);
+  console.log(`starting at ${new Date(start).toISOString()}`);
+  let i = 0;
   while (Date.now() - start < exerciseTimeInMs) {
     let current_second = String(exerciseTimeInMs + 1000 - (Date.now() - start)).slice(this.length - 5, this.length - 3);
     $('#timer').text(`Time left: ${current_second}`);
     let frequency = await getPitch();
+    console.log(`detected frequency: ${frequency} ${i}`);
     if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
         target_frequency = undefined;
         $("#new_note_form").submit();
         score++;
     }
+    i++;
   }
   $('#timer').text(`Time left: 0`);
-  console.log(`Finished at ${String(Date.now()).slice(this.length - 5, this.length - 3)}`);
+  console.log(`Finished at ${new Date().toISOString()}`);
   document.querySelector('#result').textContent = 'Done';
-  stream.getTracks().forEach(function(track) {
-    track.enabled = false;
-  });
   document.getElementById("begin_button").disabled = false;
   //$('#notes_fieldset')[0].disabled = false;
   //$('#strings_fieldset')[0].disabled = false;
