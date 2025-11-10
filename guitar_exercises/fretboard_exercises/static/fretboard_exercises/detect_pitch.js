@@ -112,7 +112,7 @@ async function runPitchDetection(startTime)
   {
     let frequency = getPitch();
     showUpdatedTimeLeft(startTime);
-    showUpdatedResult(frequency);
+    showUpdatedFrequency(frequency);
     if(correctNotePlayed(frequency))
     {
       getNewNote();
@@ -144,9 +144,9 @@ function showUpdatedTimeLeft(startTime)
   $('#timer').text(`Time left: ${Math.max(current_second, 0)}`);
 }
 
-function showUpdatedResult(result)
+function showUpdatedFrequency(freqText)
 {
-  $('#result').text(result);
+  $('#frequency').text(freqText);
 }
 
 function correctNotePlayed(frequency)
@@ -158,7 +158,7 @@ function challengeTeardown(startTime)
 {
   console.log(`Finished at ${new Date().toISOString()}`);
   showUpdatedTimeLeft(startTime);
-  showUpdatedResult('Done');
+  showUpdatedFrequency('Done');
   enableForm();
   pauseAudio();
 }
