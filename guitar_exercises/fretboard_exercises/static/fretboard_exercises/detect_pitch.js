@@ -8,7 +8,6 @@ let notSetup = true;
 let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
-const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
 
 function formIsValid(){
   let data = $("#new_note_form").serialize();
