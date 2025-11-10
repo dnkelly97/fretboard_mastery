@@ -1,17 +1,14 @@
-
-// This code is adapted from the ml5 library example found at this site:
-// https://github.com/ml5js/ml5-library/blob/main/examples/javascript/PitchDetection/PitchDetection/sketch.js
+import { PitchDetector } from "https://esm.sh/pitchy@4";
 
 let audioContext;
-let mic;
-let pitch;
+let analyzerNode;
+let pitchDetector;
 let stream;
 let notSetup = true;
 let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
 const modelURL = 'http://localhost:8000/static/fretboard_exercises/model';
-
 
 function formIsValid(){
   let data = $("#new_note_form").serialize();
@@ -39,8 +36,7 @@ function getNewNote(data){
 $(document).ready(function(){
     $('#new_note_form').submit(function(e){
         e.preventDefault();
-        let data = $(this).serialize();
-        getNewNote(data);
+        beginChallenge();
     });
     $("#alert-warning").text("");
     setup().then(pauseAudio);
@@ -51,7 +47,8 @@ async function beginChallenge(){
     await resumeAudio();
     document.getElementById("begin_button").disabled = true;
     score = 0;
-    $('#new_note_form').submit();
+    let data = $("#new_note_form").serialize();
+    getNewNote(data);
     //$('#notes_fieldset')[0].disabled = true;
     //$('#strings_fieldset')[0].disabled = true;
     startPitchDetection().then(pauseAudio);
@@ -65,7 +62,6 @@ function pauseAudio(){
   audioContext.suspend().then(() => {
     console.log('Audio Context Suspended');
   });
-  stream.getTracks().forEach((track) => { track.enabled = false; });
 }
 
 async function resumeAudio(){
@@ -73,15 +69,16 @@ async function resumeAudio(){
     await audioContext.resume();
     console.log('Audio Context Resumed');
   }
-  stream.getTracks().forEach((track) => { track.enabled = true; });
 }
 
 async function setup() {
   audioContext = await new AudioContext();
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-  pitch = await ml5.pitchDetection(modelURL, audioContext, stream, modelLoaded);
+  analyzerNode = audioContext.createAnalyser();
+  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  audioContext.createMediaStreamSource(stream).connect(analyzerNode);
+  pitchDetector = PitchDetector.forFloat32Array(analyzerNode.fftSize);
   notSetup = false;
-  console.log('setup complete:');
+  console.log('setup complete');
 }
 
 function modelLoaded() {
@@ -89,22 +86,22 @@ function modelLoaded() {
 }
 
 async function startPitchDetection(){
-  await getPitch();
   let start = Date.now();
   console.log(`starting at ${new Date(start).toISOString()}`);
-  let i = 0;
+
   while (Date.now() - start < exerciseTimeInMs) {
-    let current_second = String(exerciseTimeInMs + 1000 - (Date.now() - start)).slice(this.length - 5, this.length - 3);
+    let current_second = Math.ceil((exerciseTimeInMs - (Date.now() - start)) / 1000);
     $('#timer').text(`Time left: ${current_second}`);
-    let frequency = await getPitch();
-    console.log(`detected frequency: ${frequency} ${i}`);
+    let frequency = getPitch();
+    $('#result').text(frequency);
     if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
         target_frequency = undefined;
         $("#new_note_form").submit();
         score++;
     }
-    i++;
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
+
   $('#timer').text(`Time left: 0`);
   console.log(`Finished at ${new Date().toISOString()}`);
   document.querySelector('#result').textContent = 'Done';
@@ -113,12 +110,12 @@ async function startPitchDetection(){
   //$('#strings_fieldset')[0].disabled = false;
 }
 
-async function getPitch(start) {
-  return pitch.getPitch(function(err, frequency) {
-    if (frequency) {
-      document.querySelector('#result').textContent = frequency;
-    } else {
-      document.querySelector('#result').textContent = 'No pitch detected';
-    }
-  })
+function getPitch() {
+  let input = new Float32Array(analyzerNode.fftSize);
+  analyzerNode.getFloatTimeDomainData(input);
+  console.log(input.slice(0, 10));
+  const [frequency, clarity] = pitchDetector.findPitch(input, audioContext.sampleRate);
+  console.log(`clarity: ${clarity}`);
+  console.log(`frequency: ${frequency}`);
+  return clarity > 0.85 ? frequency : "No pitch detected";
 }
