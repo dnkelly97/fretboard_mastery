@@ -80,10 +80,6 @@ async function setup() {
   console.log('setup complete');
 }
 
-function modelLoaded() {
-  document.querySelector('#status').textContent='Model Loaded';
-}
-
 async function startPitchDetection(){
   let start = Date.now();
   console.log(`starting at ${new Date(start).toISOString()}`);
