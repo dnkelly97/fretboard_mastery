@@ -131,10 +131,7 @@ function getPitch()
 {
   let input = new Float32Array(analyzerNode.fftSize);
   analyzerNode.getFloatTimeDomainData(input);
-  console.log(input.slice(0, 10));
   const [frequency, clarity] = pitchDetector.findPitch(input, audioContext.sampleRate);
-  console.log(`clarity: ${clarity}`);
-  console.log(`frequency: ${frequency}`);
   return clarity > 0.85 ? frequency : "No pitch detected";
 }
 
