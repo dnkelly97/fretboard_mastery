@@ -4,17 +4,20 @@ let audioContext;
 let analyzerNode;
 let pitchDetector;
 let stream;
-let notSetup = true;
 let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
+
+const TARGET_FREQUENCY_MARGIN = 5; //TODO what should allowable margin be?
 
 function formIsValid(){
   let data = $("#new_note_form").serialize();
   return data.includes("notes=") && data.includes("strings=");
 }
 
-function getNewNote(data){
+function getNewNote(){
+  target_frequency = undefined;
+  let data = $("#new_note_form").serialize();
   $.ajax({
     url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
     type: 'POST',
@@ -44,12 +47,9 @@ $(document).ready(function(){
 async function beginChallenge(){
   if(formIsValid()){
     await resumeAudio();
-    $('#begin_button').prop('disabled', true);
+    disableForm();
     score = 0;
-    let data = $("#new_note_form").serialize();
-    getNewNote(data);
-    //$('#notes_fieldset')[0].disabled = true;
-    //$('#strings_fieldset')[0].disabled = true;
+    getNewNote();
     startPitchDetection().then(pauseAudio);
   }
   else{
@@ -76,34 +76,59 @@ async function setup() {
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   audioContext.createMediaStreamSource(stream).connect(analyzerNode);
   pitchDetector = PitchDetector.forFloat32Array(analyzerNode.fftSize);
-  notSetup = false;
-  $('#begin_button').prop('disabled', false);
+  enableForm();
   console.log('setup complete');
 }
 
 async function startPitchDetection(){
-  let start = Date.now();
-  console.log(`starting at ${new Date(start).toISOString()}`);
+  let startTime = Date.now();
+  console.log(`starting at ${new Date(startTime).toISOString()}`);
 
-  while (Date.now() - start < exerciseTimeInMs) {
-    let current_second = Math.ceil((exerciseTimeInMs - (Date.now() - start)) / 1000);
-    $('#timer').text(`Time left: ${current_second}`);
+  while (Date.now() - startTime < exerciseTimeInMs) {
     let frequency = getPitch();
-    $('#result').text(frequency);
-    if(Math.abs(frequency - target_frequency) < 5){ //TODO what should allowable margin be?
-        target_frequency = undefined;
-        $("#new_note_form").submit();
+    showUpdatedTimeLeft(startTime);
+    showUpdatedResult(frequency);
+    if(correctNotePlayed(frequency)){
+        getNewNote();
         score++;
     }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  $('#timer').text(`Time left: 0`);
   console.log(`Finished at ${new Date().toISOString()}`);
-  $('#result').text('Done');
+  showUpdatedTimeLeft(startTime);
+  showUpdatedResult('Done');
+  enableForm();
+}
+
+function enableForm()
+{
   $('#begin_button').prop('disabled', false);
   //$('#notes_fieldset')[0].disabled = false;
   //$('#strings_fieldset')[0].disabled = false;
+}
+
+function disableForm()
+{
+  $('#begin_button').prop('disabled', true);
+  //$('#notes_fieldset')[0].disabled = true;
+  //$('#strings_fieldset')[0].disabled = true;
+}
+
+function correctNotePlayed(frequency)
+{
+  return Math.abs(frequency - target_frequency) < TARGET_FREQUENCY_MARGIN;
+}
+
+function showUpdatedTimeLeft(startTime)
+{
+  let current_second = Math.ceil((exerciseTimeInMs - (Date.now() - startTime)) / 1000);
+  $('#timer').text(`Time left: ${Math.max(current_second, 0)}`);
+}
+
+function showUpdatedResult(result)
+{
+  $('#result').text(result);
 }
 
 function getPitch() {
