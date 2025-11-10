@@ -33,18 +33,18 @@ function getNewNote(data){
 }
 
 $(document).ready(function(){
-    $('#new_note_form').submit(function(e){
-        e.preventDefault();
-        beginChallenge();
-    });
-    $("#alert-warning").text("");
-    setup().then(pauseAudio);
+  $('#new_note_form').submit(function(e){
+    e.preventDefault();
+    beginChallenge();
+  });
+  $("#alert-warning").text("");
+  setup().then(pauseAudio);
 });
 
 async function beginChallenge(){
   if(formIsValid()){
     await resumeAudio();
-    document.getElementById("begin_button").disabled = true;
+    $('#begin_button').prop('disabled', true);
     score = 0;
     let data = $("#new_note_form").serialize();
     getNewNote(data);
@@ -71,12 +71,13 @@ async function resumeAudio(){
 }
 
 async function setup() {
-  audioContext = await new AudioContext();
+  audioContext = new AudioContext();
   analyzerNode = audioContext.createAnalyser();
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   audioContext.createMediaStreamSource(stream).connect(analyzerNode);
   pitchDetector = PitchDetector.forFloat32Array(analyzerNode.fftSize);
   notSetup = false;
+  $('#begin_button').prop('disabled', false);
   console.log('setup complete');
 }
 
@@ -99,8 +100,8 @@ async function startPitchDetection(){
 
   $('#timer').text(`Time left: 0`);
   console.log(`Finished at ${new Date().toISOString()}`);
-  document.querySelector('#result').textContent = 'Done';
-  document.getElementById("begin_button").disabled = false;
+  $('#result').text('Done');
+  $('#begin_button').prop('disabled', false);
   //$('#notes_fieldset')[0].disabled = false;
   //$('#strings_fieldset')[0].disabled = false;
 }
