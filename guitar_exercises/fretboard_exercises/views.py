@@ -17,6 +17,7 @@ def index(request, instrument):
 def get_new_note(request, instrument):
     allowed_strings = list(map(str, request.POST.getlist('strings')))
     allowed_notes = request.POST.getlist('notes')
+    print("allowed strings: ", allowed_strings)
     print("allowed notes: ", allowed_notes)
 
     try:
