@@ -7,6 +7,7 @@ let stream;
 let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
+let newNoteFormData;
 const TARGET_FREQUENCY_MARGIN = 5; //TODO what should allowable margin be?
 
 $(document).ready(function(){
@@ -19,6 +20,7 @@ function overrideFormSubmit()
 {
   $('#new_note_form').submit(function(e){
     e.preventDefault();
+    newNoteFormData = $("#new_note_form").serialize();
     if(formIsValid()){
       runChallenge();
     }
@@ -34,22 +36,15 @@ async function setup() {
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   audioContext.createMediaStreamSource(stream).connect(analyzerNode);
   pitchDetector = PitchDetector.forFloat32Array(analyzerNode.fftSize);
-  enableForm();
+  disableForm(false);
   console.log('setup complete');
 }
 
-function enableForm()
+function disableForm(disable)
 {
-  $('#begin_button').prop('disabled', false);
-  //$('#notes_fieldset')[0].disabled = false;
-  //$('#strings_fieldset')[0].disabled = false;
-}
-
-function disableForm()
-{
-  $('#begin_button').prop('disabled', true);
-  //$('#notes_fieldset')[0].disabled = true;
-  //$('#strings_fieldset')[0].disabled = true;
+  $('#begin_button').prop('disabled', disable);
+  $('#strings_fieldset').prop('disabled', disable);
+  $('#notes_fieldset').prop('disabled', disable);
 }
 
 function pauseAudio(){
@@ -66,8 +61,7 @@ async function resumeAudio(){
 }
 
 function formIsValid(){
-  let data = $("#new_note_form").serialize();
-  return data.includes("notes=") && data.includes("strings=");
+  return newNoteFormData.includes("notes=") && newNoteFormData.includes("strings=");
 }
 
 async function runChallenge(){
@@ -80,18 +74,18 @@ async function runChallenge(){
 async function challengeSetup()
 {
   await resumeAudio();
-  disableForm();
+  disableForm(true);
   score = 0;
   getNewNote();
 }
 
 function getNewNote(){
   target_frequency = undefined;
-  let data = $("#new_note_form").serialize();
+  console.log("submitting ajax req with serialized data:\n" + newNoteFormData);
   $.ajax({
     url: 'http://localhost:8000/fretboard_exercises/guitar/new_note/',
     type: 'POST',
-    data: data,
+    data: newNoteFormData,
     success: function(data){
       if(document.getElementById('note_info_display').style.display == 'none'){
         document.getElementById('note_info_display').style.display = 'block';
@@ -156,6 +150,6 @@ function challengeTeardown(startTime)
   console.log(`Finished at ${new Date().toISOString()}`);
   showUpdatedTimeLeft(startTime);
   showUpdatedFrequency('Done');
-  enableForm();
+  disableForm(false);
   pauseAudio();
 }
