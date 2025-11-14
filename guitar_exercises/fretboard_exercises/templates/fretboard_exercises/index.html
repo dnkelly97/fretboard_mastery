@@ -15,51 +15,56 @@
     <div id="message">
         <h4 id="alert-warning"></h4>
     </div>
-    <form id="new_note_form" class="card" method="post" action="new_note/">
-        {% csrf_token %}
-        <fieldset id="strings_fieldset">
-            <legend>Strings</legend>
-            <input type="checkbox" name="strings" value="1" checked>
-            <label>1  </label>
-            <input type="checkbox" name="strings" value="2" checked>
-            <label>2  </label>
-            <input type="checkbox" name="strings" value="3" checked>
-            <label>3  </label>
-            <input type="checkbox" name="strings" value="4" checked>
-            <label>4  </label>
-            <input type="checkbox" name="strings" value="5" checked>
-            <label>5  </label>
-            <input type="checkbox" name="strings" value="6" checked>
-            <label>6  </label>
-        </fieldset>
-        <fieldset id="notes_fieldset">
-            <legend>Notes</legend>
-            <input type="checkbox" name="notes" value="C" checked>
-            <label>C  </label>
-            <input type="checkbox" name="notes" value="D" checked>
-            <label>D  </label>
-            <input type="checkbox" name="notes" value="E" checked>
-            <label>E  </label>
-            <input type="checkbox" name="notes" value="F" checked>
-            <label>F  </label>
-            <input type="checkbox" name="notes" value="G" checked>
-            <label>G  </label>
-            <input type="checkbox" name="notes" value="A" checked>
-            <label>A  </label>
-            <input type="checkbox" name="notes" value="B" checked>
-            <label>B  </label>
-        </fieldset>
+    <div id="outer_div" class="card">
+        <form id="new_note_form" method="post" action="new_note/">
+            {% csrf_token %}
+            <fieldset id="strings_fieldset">
+                <legend>Strings</legend>
+                <input type="checkbox" name="strings" value="1" checked>
+                <label>1  </label>
+                <input type="checkbox" name="strings" value="2" checked>
+                <label>2  </label>
+                <input type="checkbox" name="strings" value="3" checked>
+                <label>3  </label>
+                <input type="checkbox" name="strings" value="4" checked>
+                <label>4  </label>
+                <input type="checkbox" name="strings" value="5" checked>
+                <label>5  </label>
+                <input type="checkbox" name="strings" value="6" checked>
+                <label>6  </label>
+            </fieldset>
+            <fieldset id="notes_fieldset">
+                <legend>Notes</legend>
+                <input type="checkbox" name="notes" value="C" checked>
+                <label>C  </label>
+                <input type="checkbox" name="notes" value="D" checked>
+                <label>D  </label>
+                <input type="checkbox" name="notes" value="E" checked>
+                <label>E  </label>
+                <input type="checkbox" name="notes" value="F" checked>
+                <label>F  </label>
+                <input type="checkbox" name="notes" value="G" checked>
+                <label>G  </label>
+                <input type="checkbox" name="notes" value="A" checked>
+                <label>A  </label>
+                <input type="checkbox" name="notes" value="B" checked>
+                <label>B  </label>
+            </fieldset>
+            <br>
+            <button id="begin_button" type="submit" disabled="true">Begin Challenge</button>
+        </form>
         <br>
-        <button id="begin_button" type="submit" disabled="true">Begin Challenge</button>
-    </form>
-    <br>
-    <br>
-    <p id="frequency" style="color:Red">note not detected...</p>
-    <div id="note_info_display" style="display: none;">
-        <h4 id="score"></h4>
-        <h4 id="timer"></h4>
-        <h4 id="instruction">string {{ string }} {{ note }}</h4>
-        <h4 id="target_frequency">target frequency: {{ frequency }}</h4>
+        <br>
+        <div id="challenge_results" class="card">
+            <div id="note_info_display" style="display: none;">
+                <h4 id="high_score">High Score: 0</h4>
+                <h4 id="score"></h4>
+                <h4 id="timer"></h4>
+                <h4 id="instruction">string {{ string }} {{ note }}</h4>
+                <h4 id="target_frequency">target frequency: {{ frequency }}</h4>
+            </div>
+            <p id="frequency" style="color:Red">note not detected...</p>
+        </div>
     </div>
 </body>
 </html>

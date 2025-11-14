@@ -7,12 +7,12 @@ let stream;
 let exerciseTimeInMs = 6000;
 let target_frequency;
 let score = 0;
+let high_score = 0;
 let newNoteFormData;
 const TARGET_FREQUENCY_MARGIN = 5; //TODO what should allowable margin be?
 
 $(document).ready(function(){
   overrideFormSubmit();
-  $("#alert-warning").text("");
   setup().then(pauseAudio);
 });
 
@@ -76,6 +76,7 @@ async function challengeSetup()
   await resumeAudio();
   disableForm(true);
   score = 0;
+  $("#alert-warning").text("");
   getNewNote();
 }
 
@@ -148,8 +149,24 @@ function correctNotePlayed(frequency)
 function challengeTeardown(startTime)
 {
   console.log(`Finished at ${new Date().toISOString()}`);
+  updateHighScoreDisplay();
   showUpdatedTimeLeft(startTime);
   showUpdatedFrequency('Done');
   disableForm(false);
   pauseAudio();
+}
+
+function updateHighScoreDisplay()
+{
+  if (score > high_score)
+  {
+    showHighScoreMessage();
+    high_score = score;
+    $('#high_score').text(`High Score: ${high_score}`);
+  }
+}
+
+function showHighScoreMessage()
+{
+  $('#alert-warning').text("New High Score!");
 }
