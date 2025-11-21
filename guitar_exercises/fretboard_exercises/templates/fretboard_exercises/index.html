@@ -53,18 +53,16 @@
             <br>
             <button id="begin_button" type="submit" disabled="true">Begin Challenge</button>
         </form>
-        <br>
-        <br>
-        <div id="challenge_results" class="card">
-            <div id="note_info_display" style="display: none;">
-                <h4 id="high_score">High Score: 0</h4>
-                <h4 id="score"></h4>
-                <h4 id="timer"></h4>
-                <h4 id="instruction">string {{ string }} {{ note }}</h4>
-                <h4 id="target_frequency">target frequency: {{ frequency }}</h4>
-            </div>
-            <p id="frequency">note not detected...</p>
+    </div>
+    <div id="challenge_results" class="card">
+        <div id="note_info_display">
+            <h4 id="high_score">High Score: 0</h4>
+            <h4 id="score">Score: ---</h4>
+            <h4 id="timer">Time Left: ---</h4>
+            <h4 id="instruction">Instruction: ---</h4>
+            <h4 id="target_frequency">Target Frequency: ---</h4>
         </div>
+        <p id="frequency">Measured Frequency: ---</p>
     </div>
 </body>
 </html>

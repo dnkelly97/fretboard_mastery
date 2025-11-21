@@ -91,8 +91,8 @@ function getNewNote(){
       if(document.getElementById('note_info_display').style.display == 'none'){
         document.getElementById('note_info_display').style.display = 'block';
       }
-      $('#instruction').text(`${data.note} on string ${data.string}`);
-      $('#target_frequency').text(`target frequency: ${data.frequency}`);
+      $('#instruction').text(`Instruction: ${data.note} on string ${data.string}`);
+      $('#target_frequency').text(`Target Frequency: ${data.frequency}`);
       $('#score').text(`Score: ${score}`);
       target_frequency = data.frequency;
     },
@@ -133,12 +133,12 @@ function getPitch()
 function showUpdatedTimeLeft(startTime)
 {
   let current_second = Math.ceil((exerciseTimeInMs - (Date.now() - startTime)) / 1000);
-  $('#timer').text(`Time left: ${Math.max(current_second, 0)}`);
+  $('#timer').text(`Time Left: ${Math.max(current_second, 0)}`);
 }
 
 function showUpdatedFrequency(freqText)
 {
-  $('#frequency').text(freqText);
+  $('#frequency').text(`Measured Frequency: ${freqText}`);
 }
 
 function correctNotePlayed(frequency)
@@ -153,6 +153,7 @@ function challengeTeardown(startTime)
   showUpdatedTimeLeft(startTime);
   showUpdatedFrequency('Done');
   disableForm(false);
+  $('#target_frequency').text(`Target Frequency: ---`);
   pauseAudio();
 }
 
